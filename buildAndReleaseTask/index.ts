@@ -23,19 +23,31 @@ async function run() {
 
 function executeVsTestCodeCoverage(){
     console.log('Starting executeVsTestCodeCoverage...');
+
     const vsTestExeFileLocation: string = tl.getInput('vsTestExeFileLocation', true);
+    var vsTestExeFileList : string[] = ['**\\vstest.console.exe'];
+    const vsTestExeFiles : string[] = findFiles(vsTestExeFileLocation, vsTestExeFileList);
+    vsTestExeFiles.forEach(exe => {
+        console.log('Found vsTestExeFile [' + exe + ']');
+    });
+    var vsTestExeFile = vsTestExeFiles[0];
+    
     const coverageCommand: string = tl.getInput('vsTestArgs', true);
+    
     const listFiles : string[] = findTestFiles();
 
     let projectPaths = '';
+
     listFiles.forEach(pPathFile => {
         console.log('Generating coverage for file [' + pPathFile + ']');
         projectPaths += '"' + pPathFile + '" ';
     });
 
     console.log('Generating coverage for all files in one shot. [' + projectPaths + ']');
-    console.log('"' + vsTestExeFileLocation + '" ' + projectPaths + ' ' + coverageCommand + '');
-    execSync('"' + vsTestExeFileLocation + '" ' + projectPaths + ' ' + coverageCommand + '');
+    
+    console.log('"' + vsTestExeFile + '" ' + projectPaths + ' ' + coverageCommand + '');
+    
+    execSync('"' + vsTestExeFile + '" ' + projectPaths + ' ' + coverageCommand + '');
 
     console.log('Ended executeVsTestCodeCoverage...');
 }
@@ -57,7 +69,16 @@ function executeCodeCoverageAnalyze(){
     console.log('Starting executeCodeCoverageAnalyze...');
     const listFiles : string[] = findCoverageFiles();
     const temporaryDirectoryPath : string = getTemporaryDirectory();
+    
     const codeCoverageExeFileLocation: string = tl.getInput('codeCoverageExeFileLocation', true);
+    var vsCodeCoverageExeFileList : string[] = ['**\\CodeCoverage.exe'];
+    const vsCodeCoverageExeFiles : string[] = findFiles(codeCoverageExeFileLocation, vsCodeCoverageExeFileList);
+    vsCodeCoverageExeFiles.forEach(exe => {
+        console.log('Found vsCodeCoverageExeFile [' + exe + ']');
+    });
+
+    var vsCodeCoverageExeFile = vsCodeCoverageExeFiles[0];    
+    
     const codeCoverageArg: string = tl.getInput('codeCoverageArgs', true);
     var fileCoverageXml = tl.getInput('temporaryFileCoveragexml', true);
     const command : string =  codeCoverageArg + temporaryDirectoryPath + fileCoverageXml;
@@ -70,7 +91,7 @@ function executeCodeCoverageAnalyze(){
     });
 
     console.log('Converting All these files[' + allPathFiles + '] to [' + fileCoverageXml + ']');
-    exec('"' + codeCoverageExeFileLocation + '" ' + command + ' ' + allPathFiles, (error, stdout, stderr) => {
+    exec('"' + vsCodeCoverageExeFile + '" ' + command + ' ' + allPathFiles, (error, stdout, stderr) => {
         if (error) {
             console.error(`[executeCodeCoverageAnalyze] Error unexpected! Error[${error}] `);
             return;

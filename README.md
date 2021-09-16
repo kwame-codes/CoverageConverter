@@ -1,4 +1,7 @@
 # Coverage Converter
+
+Original https://github.com/Rogeriohsjr/CoverageConverter
+
 This Task converts **.coverage** file into **.coveragexml** to be used with [Report Generator](https://marketplace.visualstudio.com/items?itemName=Palmmedia.reportgenerator).
 
 ## :smirk: Motivation/Points:
