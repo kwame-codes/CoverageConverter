@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "build-release-task",
     "name": "Coverage Converter (mod)",
-    "version": "0.1.25",
+    "version": "0.1.26",
     "publisher": "kwame",
     "targets": [
         {
