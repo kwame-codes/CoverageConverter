@@ -1,5 +1,7 @@
 # Coverage Converter
 
+https://marketplace.visualstudio.com/items?itemName=kwame.build-release-task
+
 .YML/YAML Example Usage
 
 ```
