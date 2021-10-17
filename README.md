@@ -27,7 +27,6 @@ https://marketplace.visualstudio.com/items?itemName=kwame.build-release-task
 - task: CoverageConverterMod@0
   inputs:
     searchFolderForTestFiles: '$(System.DefaultWorkingDirectory)'
-    #vsTestExeFileLocation: '$(Agent.HomeDirectory)\_work\_tool\VsTest\16.9.4\x64\tools\net451\Common7\IDE\Extensions\TestPlatform\vstest.console.exe'
     vsTestExeFileLocation: '$(Agent.HomeDirectory)\_work\_tool\VsTest\'
     vsTestArgs: '/EnableCodeCoverage'
     listTestFiles: |
@@ -36,11 +35,26 @@ https://marketplace.visualstudio.com/items?itemName=kwame.build-release-task
       !**\bin\**\ref\**
       !**\bin\**\*Integration*.dll
     searchFolderForCodeCoverageFile: '$(System.DefaultWorkingDirectory)'
-    temporaryFolderForCodeCoverage: 'Agent.TempDirectory'
+    temporaryFolderForCodeCoverage: 'System.DefaultWorkingDirectory'
     temporaryFileCoveragexml: '\TestResults\DynamicCodeCoverage.coveragexml'
-    codeCoverageArgs: 'analyze /output:Coverage.xml'
-    #codeCoverageExeFileLocation: '$(Agent.HomeDirectory)\_work\_tool\VsTest\16.9.4\x64\tools\net451\Team Tools\Dynamic Code Coverage Tools\CodeCoverage.exe'
+    codeCoverageArgs: 'analyze /output:'
     codeCoverageExeFileLocation: '$(Agent.HomeDirectory)\_work\_tool\VsTest\'
+
+# Here is the Report Generator that will get the DynamicCodeCoverage.coveraxml created above and convert into a Report.
+- task: reportgenerator@4
+  displayName: 'Generate Coverage Report'
+  inputs:
+    reports: '$(System.DefaultWorkingDirectory)\TestResults\DynamicCodeCoverage.coveragexml'
+    targetdir: '$(System.DefaultWorkingDirectory)\TestResults\Coverage\Reports'
+    reporttypes: 'HtmlInline_AzurePipelines;Cobertura;Badges'
+
+# This app will publish the report into Azure Code Coverage Tab.
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish Coverage Report'
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)\TestResults\Coverage\Reports\Cobertura.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)\TestResults\Coverage\Reports'
   ```  
 
 Original https://github.com/Rogeriohsjr/CoverageConverter
